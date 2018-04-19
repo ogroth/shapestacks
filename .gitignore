@@ -1,0 +1,11 @@
+# Python
+*.pyc
+
+# Environment
+venv/
+
+# VSCode
+.vscode/
+
+# Vim
+*.swp
