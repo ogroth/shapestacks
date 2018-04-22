@@ -160,6 +160,7 @@ ${MODEL_DIR}/
       |__ model.ckpt-xxxxxx.data-000000-of-000001
       |__ model.ckpt-xxxxxx.index
       |__ model.ckpt-xxxxxx.meta
+  |__ topn_eval_models.dict
 |__ checkpoint
 |__ events.out.tfevents.*
 |__ graph.pbtxt
@@ -179,7 +180,7 @@ The most recent model checkpoints during training are kept in the models's root 
 
 During training, the checkpoints which perform best on the validation set are also saved to the ```snapshots/``` subdirectory. The amount of best checkpoints to keep can be set via ```--n_best_eval```.
 
-We provide the best performing model from the [ShapeStacks paper]() on our [project page](http://shapestacks.robots.ox.ac.uk/#code).
+We provide the best performing models from the [ShapeStacks paper]() on our [project page](http://shapestacks.robots.ox.ac.uk/#code).
 
 ### Example: Running a stability predictor
 
