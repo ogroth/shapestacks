@@ -6,14 +6,14 @@ This repository contains a Python interface to the ShapeStacks dataset. It also 
 
 For more information about the project, please visit our project page at http://shapestacks.robots.ox.ac.uk
 
-If you use the ShapeStacks dataset or the intuitive physics models of this repository, please cite our publication:
+If you use the ShapeStacks dataset or the intuitive physics models of this repository, please cite our [publication](https://arxiv.org/pdf/1804.08018.pdf):
 
 ```
-@misc{1804.xxxxx,
+@misc{1804.08018,
 Author = {Oliver Groth and Fabian Fuchs and Ingmar Posner and Andrea Vedaldi},
 Title = {ShapeStacks: Learning Vision-Based Physical Intuition for Generalised Object Stacking},
 Year = {2018},
-Eprint = {arXiv:1804.xxxxx},
+Eprint = {arXiv:1804.08018},
 }
 ```
 
@@ -85,7 +85,7 @@ ${SHAPESTACKS_DATASET}/
 
 ### FAIR Real Block Tower Images
 
-For convenient use with this codebase, we also provide a restructured version of the real image test set of block towers released by [Lerer et al.](https://arxiv.org/abs/1603.01312) which can be downloaded [here]().
+For convenient use with this codebase, we also provide a restructured version of the real image test set of block towers released by [Lerer et al.](https://arxiv.org/abs/1603.01312) which can be downloaded [here](http://shapestacks.robots.ox.ac.uk/static/download/v1/fairblocks.tar.gz).
 
 After downloading and unpacking the data, the dataset directory living under ```FAIRBLOCKS_DATASET``` should look like this:
 
