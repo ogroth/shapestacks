@@ -23,12 +23,14 @@ The code has been tested on Ubuntu 16.04 with Python 3.5.2
 The major software requiremets can be installed via:
 
 ```bash
-$ apt-get install python3-pip python3-dev virtualenv
+$ sudo apt-get install python3-pip python3-dev virtualenv
 ```
 
 Also, in order to run the intuitive physics models efficiently on GPU, the latest NVIDIA drivers, CUDA and cuDNN frameworks which are compatible with Tensorflow should be installed.
 
 ## Installation
+
+### Python
 
 All Python dependencies of the ShapeStacks code should live in their own virtual environment. All runtime requirements can be easily installed via the following commands:
 
@@ -43,6 +45,12 @@ Additional requirements for development purposes can be found in ```dev_requirem
 ```bash
 (venv) $ pip3 install -r dev_requirements.txt
 ```
+
+### MuJoCo
+
+In order to run simulation related code (e.g. [create new scenarios](shapestacks_creator), [render scenarios](shapestacks_renderer) or run a [stacking algorithm](shapestacks_stacker)) you need to have the MuJoCo physics engine installed.
+
+We provide a quick installation guide [here](mujoco_installation.md), but in case any issues occur during installation, we refer to the original maintainers of [MuJoCo](http://www.mujoco.org/) and [mujoco-py](https://github.com/openai/mujoco-py) for troubleshooting.
 
 ## Data Setup
 
