@@ -81,6 +81,8 @@ ${SHAPESTACKS_DATASET}/
         |__ eval_bgr_mean.npy
         |__ test_bgr_mean.npy
         |__ train_bgr_mean.npy
+    |__ default/
+        |__ ...
 ```
 
 ### FAIR Real Block Tower Images
