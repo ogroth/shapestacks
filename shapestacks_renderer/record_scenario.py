@@ -38,7 +38,7 @@ ARGPARSER.add_argument(
     help="The target directory to store the recordings in.")
 # simulation settings
 ARGPARSER.add_argument(
-    '-t', dest='time', type=int, default=5,
+    '--mjsim_time', type=int, default=5,
     help="Simulation time in seconds.")
 # recording settings
 ARGPARSER.add_argument(
@@ -334,7 +334,7 @@ if __name__ == '__main__':
   model_xml = ET.parse(FLAGS.mjmodel_path).getroot()
   timestep = float(model_xml.find("./option").attrib['timestep'])
   snapshot_interval = math.ceil((1.0 / FLAGS.fps) / timestep)
-  total_frames = FLAGS.time * FLAGS.fps
+  total_frames = FLAGS.mjsim_time * FLAGS.fps
   total_steps = snapshot_interval * total_frames
   print("Simulation timestep: %.3fs" % timestep)
   print("Snapshot interval: %d" % snapshot_interval)
