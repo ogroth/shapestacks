@@ -2,13 +2,17 @@
 Creates a ShapeStack scenario.
 """
 
-import argparse
+import sys
 import os
+import argparse
 import shutil
 import xml.etree.ElementTree as ET
 import random
 import math
+
 from bs4 import BeautifulSoup
+
+sys.path.insert(0, os.environ['SHAPESTACKS_CODE_HOME'])
 from simulation_builder.world_builder import MjWorldBuilder
 from simulation_builder.asset_builder import MjAssetBuilder
 from simulation_builder.mj_schema import MjcfFormat
