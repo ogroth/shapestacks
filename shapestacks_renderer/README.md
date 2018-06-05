@@ -3,7 +3,7 @@
 After activating the ShapeStacks virtual environment, run the recording script as follows:
 
 ```bash
-(venv) $ python3 record_scenario.py \
+(venv) $ LD_PRELOAD=/usr/lib/nvidia-384/libOpenGL.so python3 record_scenario.py \
   --mjmodel_path ${SHAPESTACKS_CODE_HOME}/data/shapestacks_example/mjcf/env_ccs-easy-h=5-vcom=2-vpsf=0-v=1.xml \
   --record_path ${SHAPESTACKS_CODE_HOME}/data/shapestacks_example/recordings/env_ccs-easy-h=5-vcom=2-vpsf=0-v=1 \
   --mjsim_time 4 \
