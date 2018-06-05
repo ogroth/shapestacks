@@ -8,17 +8,22 @@ Execute with:
 LD_PRELOAD=/usr/lib/nvidia-384/libOpenGL.so python3 record_scenario.py ...
 """
 
-import argparse
+import sys
 import os
+import argparse
 import pickle
 import math
 import random
 import re
 import xml.etree.ElementTree as ET
+
 import numpy as np
 import scipy.misc
+
 import mujoco_py
 from mujoco_py.modder import LightModder, CameraModder
+
+sys.path.insert(0, os.environ['SHAPESTACKS_CODE_HOME'])
 from utilities.mujoco_utils import mjsim_mat_id2name
 
 
@@ -320,6 +325,10 @@ if __name__ == '__main__':
   FLAGS = ARGPARSER.parse_args()
   print("Hello from the simulation recorder!")
   print("Arguments: ", FLAGS)
+
+  # directory setup
+  if not os.path.exists(FLAGS.record_path):
+    os.makedirs(FLAGS.record_path)
 
   # load model
   model = mujoco_py.load_model_from_path(FLAGS.mjmodel_path)
