@@ -4,7 +4,7 @@ After activating the ShapeStacks virtual environment, run the scenario creation 
 
 ```bash
 (venv) $ python3 create_scenario.py \
-  --mjmodel_name ccs-easy-h=4-vcom=2-vpsf=0-v=1
+  --mjmodel_name ccs-easy-h=4-vcom=2-vpsf=0-v=1 \
   --template_path ${SHAPESTACKS_CODE_HOME}/data/shapestacks_example/mjcf_template \
   --export_path ${SHAPESTACKS_CODE_HOME}/data/shapestacks_example/mjcf \
   --shapes cuboid cylinder sphere \
