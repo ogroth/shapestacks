@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mujoco model="ccs-easy-h=5-vcom=2-vpsf=0-v=1">
+ <compiler angle="degree" eulerseq="XYZ" strippath="false" texturedir="textures/"/>
+ <option cone="elliptic" iterations="50" jacobian="sparse" o_margin="0" o_solimp="0.7 0.75 0.001" o_solref="0.02 1" solver="Newton" timestep="0.003" tolerance="1e-10">
+  <flag override="enable"/>
+ </option>
+ <size nconmax="2000" njmax="5000" nstack="5000000"/>
+ <default>
+  <geom solimp=".9 .9 .01"/>
+ </default>
+ <include file="assets.xml"/>
+ <visual>
+  <headlight active="0"/>
+  <quality offsamples="8" shadowsize="4096"/>
+  <map force="0.05" shadowclip="10" znear="0.1"/>
+ </visual>
+ <statistic extent="4"/>
+ <include file="world_ccs-easy-h=5-vcom=2-vpsf=0-v=1.xml"/>
+</mujoco>
