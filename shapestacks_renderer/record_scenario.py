@@ -96,12 +96,12 @@ VELOCITY_TOLERANCE = 0.2 # velocities below this threshold are considered 'no mo
 
 # objects
 OBJ_COLORS_RGBA = [
-    (1, 0, 0, 1),  # red
-    (0, 1, 0, 1),  # green
-    (0, 0, 1, 1),  # blue
-    (1, 1, 0, 1),  # yellow
-    (0, 1, 1, 1),  # cyan
-    (1, 0, 1, 1),  # magenta
+    [1, 0, 0, 1],  # red
+    [0, 1, 0, 1],  # green
+    [0, 0, 1, 1],  # blue
+    [1, 1, 0, 1],  # yellow
+    [0, 1, 1, 1],  # cyan
+    [1, 0, 1, 1],  # magenta
 ]
 VSEG_COLOR_CODES = [
     [0, 0, 0, 1],  # black : 0 = background pixel

@@ -4,8 +4,8 @@ After activating the ShapeStacks virtual environment, run the recording script a
 
 ```bash
 (venv) $ python3 record_scenario.py \
-  --mjmodel_path ${SHAPESTACKS_CODE_HOME}/data/shapestacks_example/mjcf/env_test.xml \
-  --record_path ${SHAPESTACKS_CODE_HOME}/data/shapestacks_example/recordings/env_test \
+  --mjmodel_path ${SHAPESTACKS_CODE_HOME}/data/shapestacks_example/mjcf/env_ccs-easy-h=5-vcom=2-vpsf=0-v=1.xml \
+  --record_path ${SHAPESTACKS_CODE_HOME}/data/shapestacks_example/recordings/env_ccs-easy-h=5-vcom=2-vpsf=0-v=1 \
   --mjsim_time 4 \
   --fps 8 \
   --max_frames 32 \
