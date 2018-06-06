@@ -6,17 +6,19 @@ On Ubuntu 16.04 execute with for offscreen rendering:
 LD_PRELOAD=/usr/lib/nvidia-384/libOpenGL.so
 """
 
+import sys
+import os
+import argparse
+import re
+import math
+import pickle
+
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import ImageGrid
 from mpl_toolkits.mplot3d import Axes3D
 
-import argparse
-import re
-import os
-import math
-import pickle
 import numpy as np
 import tensorflow as tf
 
@@ -24,12 +26,10 @@ import mujoco_py
 from mujoco_py.modder import CameraModder
 from mujoco_py.generated.const import FB_OFFSCREEN, FB_WINDOW
 
+sys.path.insert(0, os.environ['SHAPESTACKS_CODE_HOME'])
 from tf_models.inception.inception_v4 import inception_v4
-# from stability_predictor.tf_models.inception.inception_v3 import inception_v3
-# from stability_predictor.tf_models.alexnet.alexnet import alexnet_graph_generator
-
 from utilities.rotation_utils import quaternion_from_euler, euler_from_quaternion
-from utilities.mujoco_utils import mjsim_mat_id2name
+from utilities.mujoco_utils import mjsim_mat_id2name, mjhlp_geom_type_id2name
 
 # command line arguments
 ARGPARSER = argparse.ArgumentParser(
@@ -42,7 +42,7 @@ ARGPARSER.add_argument(
 ARGPARSER.add_argument(
     '--tfmodel', type=str, default='inception_v4',
     help="The stability predictor architecture to use. \
-    Available: alexnet | inception_v3 | inception_v4")
+    Available: inception_v4")
 ARGPARSER.add_argument(
     '--tfckpt_dir', type=str,
     help="The directory of the TF model snapshot to use.")
@@ -134,14 +134,6 @@ OBJ_COLORS_RGBA = [
 INIT_TEMP = 1.0
 
 
-# mujoco helpers; TODO: refactor into mujoco tools!
-
-def mjhlp_geom_type_id2name(geom_type_id: int) -> str:
-  geom_types = ['plane', 'hfield', 'sphere', 'capsule', 'ellipsoid', \
-      'cylinder', 'box', 'mesh']
-  return geom_types[geom_type_id]
-
-
 # simulation functions
 
 def parse_object_names(mjmodel):
@@ -186,17 +178,6 @@ def _init_stability_predictor(tfmodel, tfckpt_dir):
   if tfmodel == 'inception_v4':
     logits, endpoints = inception_v4(
         inputs=inputs,
-        num_classes=num_classes,
-        is_training=False)
-  elif tfmodel == 'inception_v3':
-    logits, endpoints = inception_v3(
-        inputs=inputs,
-        num_classes=num_classes,
-        is_training=False)
-  elif tfmodel == 'alexnet':
-    inputs_transposed = tf.transpose(inputs, [0, 3, 1, 2], name='inputs_transposed')
-    logits = alexnet_graph_generator(
-        inputs=inputs_transposed,
         num_classes=num_classes,
         is_training=False)
   else:
@@ -424,7 +405,6 @@ def _init_scene():
       filter(lambda n: n.startswith('shape_') or n.startswith('obj_'), \
         MJMODEL.geom_names):
       mj_geom_id = MJMODEL.geom_name2id(mj_geom_name)
-      # mj_geom_rgba = np.random.random(4)
       # mj_geom_rgba[3] = 1.0
       mj_geom_rgba = OBJ_COLORS_RGBA[np.random.randint(0, len(OBJ_COLORS_RGBA))]
       MJMODEL.geom_rgba[mj_geom_id] = mj_geom_rgba
@@ -463,234 +443,6 @@ def _idle_mode():
   """
   while True:
     MJSIM.step()
-    if FLAGS.rendering_mode == 'onscreen':
-      mujoco_py.functions.mjr_setBuffer(FB_WINDOW, MJSIM.render_contexts[0].con)
-      MJVIEWER.render()
-
-def _movement_debug_mode(obj_queue):
-  """
-  Simple debugging routine for object (de-)activation, movement and rotation.
-  """
-  # counters for simulation
-  t = 0
-
-  # state of the current moving object
-  cur_obj_name = None
-  cur_obj_orig_pos = None
-  cur_obj_orig_quat = None
-
-  while True:
-
-    # exit mode when no object moving or queued any more
-    if cur_obj_name is None \
-      and len(obj_queue) == 0:
-      break
-
-    # throw the next available object in
-    if cur_obj_name is None \
-      and len(obj_queue) > 0 \
-      and t % STEPS_STACKING_ROUND == 0:
-      cur_obj_name = obj_queue.pop(0)
-      cur_obj_orig_pos = _get_object_pos(cur_obj_name)
-      cur_obj_orig_quat = _get_object_quat(cur_obj_name)
-      _activate_object(cur_obj_name)
-      _set_object_pos(cur_obj_name, [0, 0, 10])
-      _set_object_vel(cur_obj_name, np.zeros(6))
-      _set_object_euler(
-          cur_obj_name,
-          [90.0, 0.0, float(np.random.randint(0, 360))])
-
-    # put the current object back to its original position
-    if cur_obj_name \
-      and t % (4 * STEPS_STACKING_ROUND + 1) == 0:
-      _set_object_vel(cur_obj_name, np.zeros(6))
-      _set_object_quat(cur_obj_name, cur_obj_orig_quat)
-      _set_object_pos(cur_obj_name, cur_obj_orig_pos)
-      cur_obj_name = None
-
-    # advance simulation after applying all changes
-    MJSIM.step()
-    t += 1
-
-    # render
-    if FLAGS.rendering_mode == 'onscreen':
-      mujoco_py.functions.mjr_setBuffer(FB_WINDOW, MJSIM.render_contexts[0].con)
-      MJVIEWER.render()
-
-def _stackability_debug_mode(obj_list):
-  """
-  pass
-  """
-  print("Debugging all stackability configurations...")
-
-  # obj_handle = {'name' : None, 'orig_qpos' : None, 'init_qpos' : None}
-  base_obj_dict = {} # DEBUG
-  obj_pair_queue = [] # (base_obj_handle, mover_obj_handle)
-
-  # pre-compute all estimation setups
-  # for base_obj_name in obj_list:
-  for base_obj_name in filter(lambda obj_name: '_base_' in obj_name, obj_list):
-
-    # original qpos of base object and size
-    base_obj_orig_qpos = _get_object_qpos(base_obj_name)
-    base_obj_orig_quat = base_obj_orig_qpos[3:7]
-    base_obj_euler_str = re.search(r'euler=\d+_\d+_\d+', base_obj_name).group(0)
-    base_obj_euler_str = base_obj_euler_str.lstrip('euler=')
-    base_obj_euler = np.array([int(d) for d in base_obj_euler_str.split('_')])
-    print("base:", base_obj_name, base_obj_orig_quat, base_obj_euler)
-
-    # get object shape and init possible orientations
-    base_obj_size = _get_object_size(base_obj_name)
-    base_obj_shape = _get_object_shape(base_obj_name)
-    if base_obj_shape == 'sphere':
-      base_obj_init_quats = [quaternion_from_euler(0.0, 0.0, 0.0)]
-      base_obj_init_heights = [base_obj_size[0] * 2.0]
-    elif base_obj_shape == 'cylinder':
-      base_obj_init_quats = [
-          quaternion_from_euler(0.0, 0.0, 0.0),
-          quaternion_from_euler(90.0 / 360.0 * 2 * np.pi, 0.0, 0.0)]
-      if base_obj_euler[0] % 180 == 90: # sideways cylinder picked up
-        base_obj_init_heights = [
-            base_obj_size[0] * 2.0,   # sideways cylinder
-            base_obj_size[1] * 2.0]   # upright cylinder
-      elif base_obj_euler[0] % 180 == 0: # upright cylinder picked up
-        base_obj_init_heights = [
-            base_obj_size[1] * 2.0,   # upright cylinder
-            base_obj_size[0] * 2.0]   # sideways cylinder
-      else:
-        raise Exception("Cannot handle %s with initial orientation %s" \
-            % (base_obj_shape, base_obj_euler))
-    elif base_obj_shape == 'box':
-      base_obj_init_quats = [
-          quaternion_from_euler(0.0, 0.0, 0.0),
-          quaternion_from_euler(90.0 / 360.0 * 2 * np.pi, 0.0, 0.0),
-          quaternion_from_euler(0.0, 90.0 / 360.0 * 2 * np.pi, 0.0)]
-      base_obj_init_heights = [
-          base_obj_size[2] * 2.0,   # Z upright
-          base_obj_size[1] * 2.0,   # X upright
-          base_obj_size[0] * 2.0]   # Y upright
-    else:
-      raise Exception("Cannot handle shape type %s!" % base_obj_shape)
-
-    # init all possible mover objects
-    # mover_list = set(obj_list)
-    mover_list = set(list(filter(lambda obj_name: '_mover_' in obj_name, obj_list)))
-    # mover_list.remove(base_obj_name)
-    mover_list = list(mover_list)
-
-    # iterate over all base and mover combinations
-    for base_obj_init_quat, base_obj_init_h \
-      in zip(base_obj_init_quats, base_obj_init_heights):
-
-      # compute base_obj_init_qpos
-      base_obj_init_qpos = np.zeros(7)
-      base_obj_init_qpos[2] = base_obj_init_h / 2.0
-      base_obj_init_qpos[3:] = np.array(base_obj_init_quat)
-
-      # lookup for base object configurations
-      base_obj_handle = {
-          'name' : base_obj_name,
-          'orig_qpos' : base_obj_orig_qpos,
-          'init_qpos' : base_obj_init_qpos}
-      base_obj_key = base_obj_name + '#' + str(base_obj_init_qpos)
-      base_obj_dict.update({base_obj_key : base_obj_handle})
-
-      # iterate over all possible movers
-      for mover_obj_name in mover_list:
-
-        # original qpos of base object and size
-        mover_obj_orig_qpos = _get_object_qpos(mover_obj_name)
-        mover_obj_orig_quat = mover_obj_orig_qpos[3:7]
-        mover_obj_euler_str = re.search(r'euler=\d+_\d+_\d+', mover_obj_name).group(0)
-        mover_obj_euler_str = mover_obj_euler_str.lstrip('euler=')
-        mover_obj_euler = np.array([int(d) for d in mover_obj_euler_str.split('_')])
-        print("mover:", mover_obj_name, mover_obj_orig_quat, mover_obj_euler)
-
-        # get object shape and init possible orientations
-        mover_obj_size = _get_object_size(mover_obj_name)
-        mover_obj_shape = _get_object_shape(mover_obj_name)
-        if mover_obj_shape == 'sphere':
-          mover_obj_h = mover_obj_size[0] * 2.0
-        elif mover_obj_shape == 'cylinder':
-          if mover_obj_euler[0] % 180 == 90: # sideways cylinder picked up
-            mover_obj_h = mover_obj_size[0] * 2.0
-          elif mover_obj_euler[0] % 180 == 0: # upright cylinder picked up
-            mover_obj_h = mover_obj_size[1] * 2.0
-          else:
-            raise Exception("Cannot handle %s with initial orientation %s" \
-                % (mover_obj_shape, mover_obj_euler))
-        elif mover_obj_shape == 'box':
-          mover_obj_h = mover_obj_size[2] * 2.0
-        else:
-          raise Exception("Cannot handle shape type %s!" % base_obj_shape)
-
-        mover_obj_init_qpos = np.zeros(7)
-        mover_obj_init_qpos[2] = \
-          base_obj_init_h + mover_obj_h / 2.0 + OBJ_FLOAT_Z_OFFSET
-        mover_obj_init_qpos[3:] = mover_obj_orig_qpos[3:] # set quat
-        mover_obj_handle = {
-            'name' : mover_obj_name,
-            'orig_qpos' : mover_obj_orig_qpos,
-            'init_qpos' : mover_obj_init_qpos
-        }
-        obj_pair_queue.append((base_obj_handle, mover_obj_handle))
-
-  # local counters stackability (reset after every stacking trial)
-  t = 0
-  cur_obj_pair = None
-
-  while True:
-
-    # exit mode when no object moving or queued any more
-    if cur_obj_pair is None \
-      and len(obj_pair_queue) == 0:
-      break
-
-    # throw the next available object in
-    if cur_obj_pair is None \
-      and len(obj_pair_queue) > 0:
-      # get next pair
-      cur_obj_pair = obj_pair_queue.pop()
-      bh, mh = cur_obj_pair
-      # spawn base
-      _activate_object(bh['name'])
-      _set_object_qpos(bh['name'], bh['init_qpos'])
-      _set_object_vel(bh['name'], np.zeros(6))
-      # spawn mover and init simulated annealing
-      _activate_object(mh['name'])
-      mover_init_qpos = mh['init_qpos']
-      m_cur_x, m_cur_y = 0.0, 0.0
-      mover_init_qpos[0:2] = np.array([m_cur_x, m_cur_y])
-      _set_object_qpos(mh['name'], mover_init_qpos)
-      _set_object_vel(mh['name'], np.zeros(6))
-      # DEBUG
-      base_obj_key = bh['name'] + '#' + str(bh['init_qpos'])
-      mover_obj_key = mh['name'] + '#' + str(mh['init_qpos'])
-      print("Estimating stackability for \n base = %s \n mover = %s" % \
-          (base_obj_key, mover_obj_key))
-
-    # put the current object back to its original position
-    if cur_obj_pair \
-      and t > 300:
-      bh, mh = cur_obj_pair
-      # reset base
-      _set_object_qpos(bh['name'], bh['orig_qpos'])
-      _set_object_vel(bh['name'], np.zeros(6))
-      _deactivate_object(bh['name'])
-      # reset mover
-      _set_object_qpos(mh['name'], mh['orig_qpos'])
-      _set_object_vel(mh['name'], np.zeros(6))
-      _deactivate_object(mh['name'])
-      # reset pair
-      t = 0
-      cur_obj_pair = None
-      temp = INIT_TEMP
-
-    # advance simulation after applying all changes
-    MJSIM.step()
-    t += 1
-
-    # render
     if FLAGS.rendering_mode == 'onscreen':
       mujoco_py.functions.mjr_setBuffer(FB_WINDOW, MJSIM.render_contexts[0].con)
       MJVIEWER.render()
@@ -756,9 +508,9 @@ def _stackability_estimation_mode(obj_list):
       raise Exception("Cannot handle shape type %s!" % base_obj_shape)
 
     # init all possible mover objects
-    # mover_list = set(obj_list)
+    mover_list = set(obj_list)
     mover_list = set(list(filter(lambda obj_name: '_mover_' in obj_name, obj_list)))
-    # mover_list.remove(base_obj_name)
+    mover_list.remove(base_obj_name)
     mover_list = list(mover_list)
 
     # iterate over all base and mover combinations
@@ -877,13 +629,6 @@ def _stackability_estimation_mode(obj_list):
           print("%s already placed in different orientation!" % obj_name)
           continue
         else:
-          # obj_init_qpos = np.copy(base_obj_dict[obj_key]['init_qpos'])
-          # obj_h = obj_init_qpos[2] * 2.0
-          # obj_init_qpos[2] += stack_height # adjust spawn height
-          # _activate_object(obj_name)
-          # _set_object_qpos(obj_name, obj_init_qpos)
-          # _set_object_vel(obj_name, np.zeros(6))
-          # stack_height += obj_h
           placed_objects.add(obj_name)
           STACKING_QUEUE.append((obj_name, base_obj_dict[obj_key]['init_qpos'], stackability_score))
       break
@@ -1003,11 +748,9 @@ def _stackability_estimation_mode(obj_list):
       # store the stackability information
       base_obj_key = bh['name'] + '#' + str(bh['init_qpos'])
       if not base_obj_key in base_ranking:
-        base_ranking.update({base_obj_key : best_conf})
-        # base_ranking.update({base_obj_key : np.average(pert_scores)})
+        base_ranking.update({base_obj_key : np.average(pert_scores)})
       else:
-        base_ranking[base_obj_key] += best_conf
-        # base_ranking[base_obj_key] += np.average(pert_scores)
+        base_ranking[base_obj_key] += np.average(pert_scores)
       # reset base
       _set_object_qpos(bh['name'], bh['orig_qpos'])
       _set_object_vel(bh['name'], np.zeros(6))
@@ -1019,47 +762,6 @@ def _stackability_estimation_mode(obj_list):
       # reset pair
       t = 0
       cur_obj_pair = None
-
-    # advance simulation after applying all changes
-    MJSIM.step()
-    t += 1
-
-    # render
-    if FLAGS.rendering_mode == 'onscreen':
-      mujoco_py.functions.mjr_setBuffer(FB_WINDOW, MJSIM.render_contexts[0].con)
-      MJVIEWER.render()
-
-def _stacking_debug_mode(obj_queue):
-  """
-  Stacks objects from obj_queue randomly rotated around the Z-axis at the \
-  world's origin.
-  Expects obj_queue to be FIFO (pop from front).
-  """
-
-  # global counters
-  stack_height = 0.0
-  # local counters (reset after every stack)
-  t = 0
-  cur_obj_name = None
-
-  while True:
-
-    if cur_obj_name is None \
-      and len(obj_queue) == 0: # no more objects to stack
-      break
-
-    if cur_obj_name is None \
-      and len(obj_queue) > 0 \
-      and t % STEPS_STACKING_ROUND == 0:
-      cur_obj_name, obj_init_qpos, score = obj_queue.pop(0)
-      obj_h = obj_init_qpos[2] * 2.0
-      obj_init_qpos[2] += (stack_height + OBJ_FLOAT_Z_OFFSET) # adjust spawn height
-      _activate_object(cur_obj_name)
-      _set_object_qpos(cur_obj_name, obj_init_qpos)
-      _rotate_object(cur_obj_name, [0.0, 0.0, float(np.random.randint(0, 360))])
-      _set_object_vel(cur_obj_name, np.zeros(6))
-      stack_height += obj_h
-      cur_obj_name = None
 
     # advance simulation after applying all changes
     MJSIM.step()
@@ -1119,15 +821,6 @@ def _stacking_mode(obj_queue):
       velocities = np.abs(MJSIM.data.sensordata)
       stack_collapsed = np.any(velocities > VELOCITY_THRES)
       if stack_collapsed:
-        # clear object queue and make all remaining objects visible
-        # for i, cur_obj_handle in enumerate(obj_queue):
-        #   cur_obj_name, obj_init_qpos, score = cur_obj_handle
-        #   obj_rest_qpos = np.copy(obj_init_qpos)
-        #   obj_rest_qpos[0] = (-12.0 - i * 2.0)
-        #   obj_rest_qpos[1] = (-12.0 - i * 2.0)
-        #   _set_object_qpos(cur_obj_name, obj_rest_qpos)
-        #   _activate_object(cur_obj_name)
-        #   MJSIM.step() # update simulation
         obj_queue.clear()
 
     # pick up next object
@@ -1708,10 +1401,10 @@ if __name__ == '__main__':
   _init_cameras(CAM_LIST)
 
   # quick debug run only
-  if (FLAGS.mode == 'stacking' or FLAGS.mode == 'ranking') and FLAGS.debug:
-    MJVIEWER = mujoco_py.MjViewer(MJSIM)
-    _stackability_debug_mode(OBJ_LIST)
-    _idle_mode()
+  # if (FLAGS.mode == 'stacking' or FLAGS.mode == 'ranking') and FLAGS.debug:
+  #   MJVIEWER = mujoco_py.MjViewer(MJSIM)
+  #   _stackability_debug_mode(OBJ_LIST)
+  #   _idle_mode()
 
   # tfmodel & session setup
   print("Initializing stability predictor...")

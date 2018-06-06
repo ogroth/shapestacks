@@ -22,3 +22,8 @@ def mjsim_mat_id2name(sim: mujoco_py.MjSim):
             list(sim.model.names[mat_name_addr_start:mat_name_addr_end]))))
     mat_id2name.update({mat_id : mat_name})
   return mat_id2name
+
+def mjhlp_geom_type_id2name(geom_type_id: int) -> str:
+  geom_types = ['plane', 'hfield', 'sphere', 'capsule', 'ellipsoid', \
+      'cylinder', 'box', 'mesh']
+  return geom_types[geom_type_id]
