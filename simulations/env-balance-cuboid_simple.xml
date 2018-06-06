@@ -1,0 +1,46 @@
+<mujoco model="Balance Cuboid Simple">
+    <compiler 
+        angle="degree"
+        eulerseq="XYZ" 
+        strippath="false" 
+        texturedir="textures/" 
+        />
+
+    <option 
+        timestep="0.003" 
+        density="0" 
+        iterations="50" 
+        solver="Newton" 
+        jacobian="sparse" 
+        cone="elliptic" 
+        tolerance="1e-10" 
+        o_margin="0" 
+        o_solref="0.006 1" 
+        o_solimp="0.8 0.8 0.001" 
+        noslip_iterations="0" 
+        noslip_tolerance="1e-8" 
+        mpr_iterations="50" 
+        mpr_tolerance="1e-6"
+        >
+        <flag override="enable" />
+    </option>
+
+    <size njmax="5000" nconmax="2000" nstack="5000000"/>
+
+    <default>
+        <geom solimp=".9 .9 .01"/>
+    </default>
+
+    <include file="assets.xml"/>
+
+    <visual>
+        <headlight active="0"/>
+        <quality shadowsize="4096" offsamples="8"/>
+        <map znear="0.1" force="0.05" shadowclip="10"/>
+    </visual>
+
+    <statistic extent="4"/>
+
+    <include file="world-balance-cuboid_simple.xml"/>
+
+</mujoco>

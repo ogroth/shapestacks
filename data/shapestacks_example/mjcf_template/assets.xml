@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assets>
+    <asset>
+        <texture name="skybox" type="skybox" builtin="gradient" width="128" height="128" rgb1=".4 .6 .8" rgb2="0 0 0"/>
+        <texture name="tex_checker" type="2d" builtin="checker" rgb1=".4 .4 .4" rgb2=".6 .6 .6" width="512" height="512"/>  
+        <material name='mat_checker' reflectance='0.3' texture="tex_checker" texrepeat="1 1" texuniform="true"/>
+    </asset>
+</assets>

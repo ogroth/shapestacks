@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assets>
+ <asset>
+  <texture builtin="gradient" height="128" name="skybox" rgb1=".4 .6 .8" rgb2="0 0 0" type="skybox" width="128"/>
+  <texture builtin="checker" height="512" name="tex_checker" rgb1=".4 .4 .4" rgb2=".6 .6 .6" type="2d" width="512"/>
+  <material name="mat_checker" reflectance="0.3" texrepeat="1 1" texture="tex_checker" texuniform="true"/>
+  <texture file="floor/003.png" name="tex_floor_003" type="2d"/>
+  <texture file="floor/001.png" name="tex_floor_001" type="2d"/>
+  <texture file="floor/005.png" name="tex_floor_005" type="2d"/>
+  <texture file="floor/002.png" name="tex_floor_002" type="2d"/>
+  <texture file="floor/006.png" name="tex_floor_006" type="2d"/>
+  <texture file="floor/004.png" name="tex_floor_004" type="2d"/>
+  <texture file="wall/003.png" name="tex_wall_003" type="2d"/>
+  <texture file="wall/001.png" name="tex_wall_001" type="2d"/>
+  <texture file="wall/005.png" name="tex_wall_005" type="2d"/>
+  <texture file="wall/002.png" name="tex_wall_002" type="2d"/>
+  <texture file="wall/006.png" name="tex_wall_006" type="2d"/>
+  <texture file="wall/004.png" name="tex_wall_004" type="2d"/>
+  <material name="mat_floor_003" texture="tex_floor_003"/>
+  <material name="mat_floor_001" texture="tex_floor_001"/>
+  <material name="mat_floor_005" texture="tex_floor_005"/>
+  <material name="mat_floor_002" texture="tex_floor_002"/>
+  <material name="mat_floor_006" texture="tex_floor_006"/>
+  <material name="mat_floor_004" texture="tex_floor_004"/>
+  <material name="mat_wall_003" texture="tex_wall_003"/>
+  <material name="mat_wall_001" texture="tex_wall_001"/>
+  <material name="mat_wall_005" texture="tex_wall_005"/>
+  <material name="mat_wall_002" texture="tex_wall_002"/>
+  <material name="mat_wall_006" texture="tex_wall_006"/>
+  <material name="mat_wall_004" texture="tex_wall_004"/>
+ </asset>
+</assets>

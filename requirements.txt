@@ -1,11 +1,14 @@
 absl-py==0.1.13
 astor==0.6.2
+beautifulsoup4==4.6.0
 bleach==1.5.0
+bs4==0.0.1
 cycler==0.10.0
 gast==0.2.0
 grpcio==1.11.0
 html5lib==0.9999999
 kiwisolver==1.0.1
+lxml==3.5.0
 Markdown==2.6.11
 matplotlib==2.2.2
 numpy==1.14.2
@@ -14,7 +17,8 @@ pyparsing==2.2.0
 python-dateutil==2.7.2
 pytz==2018.4
 six==1.11.0
-tensorboard==1.7.0
-tensorflow-gpu==1.7.0
+scipy==1.1.0
+tensorboard==1.8.0
+tensorflow-gpu==1.8.0
 termcolor==1.1.0
 Werkzeug==0.14.1
