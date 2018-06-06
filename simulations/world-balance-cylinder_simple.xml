@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<world>
+ <worldbody>
+
+  <geom euler="0 0 0" material="mat_floor_001" name="floor" pos="0 0 0" size="10 10 0.5" type="plane"/>
+  <geom euler="90 180 0" material="mat_wall_001" name="wall_1" pos="0 10 10" size="10 10 0.5" type="plane"/>
+  <geom euler="270 0 90" material="mat_wall_001" name="wall_2" pos="10 0 10" size="10 10 0.5" type="plane"/>
+
+  <body pos="0.0 0.0 0.75" name="obj_base_1-euler=0_0_0">
+    <joint name='obj_base_1-euler=0_0_0' type="free"/>
+    <!-- <geom condim="6" euler="0 0 0" name="obj_base_1-euler=0_0_0" pos="0 0 0" rgba="1 0 0 1" size="0.25 0.5 2.0" type="box"/> -->
+    <geom condim="6" euler="0 0 0" name="obj_base_1-euler=0_0_0" pos="0 0 0" rgba="1 0 0 1" size="0.25 0.5 0.75" type="box"/>
+    <body>
+      <site name="site_velo_1" pos="0 0 0" size="0.01"/>
+    </body>    
+  </body>
+
+  <body pos="-0.3 0.0 1.75" name="obj_base_2-euler=0_0_0">
+    <joint name='obj_base_2-euler=0_0_0' type="free"/>
+    <!-- <geom condim="6" euler="0 0 0" name="obj_base_2-euler=0_0_0" pos="0 0 0" rgba="0 1 0 1" size="2.0 0.5 0.25" type="box"/> -->
+    <geom condim="6" euler="0 0 0" name="obj_base_2-euler=0_0_0" pos="0 0 0" rgba="0 1 0 1" size="0.75 0.5 0.25" type="box"/>
+    <body>
+      <site name="site_velo_2" pos="0 0 0" size="0.01"/>
+    </body>      
+  </body>
+
+  <body pos="-12.0 -12.0 0.25" name="obj_mover_3-euler=0_0_0">
+  <!-- <body pos="0.0 0.0 2.25" name="obj_mover_3-euler=0_0_0"> -->
+    <joint name='obj_mover_3-euler=0_0_0' type="free"/>
+    <geom condim="6" euler="0 0 0" name="obj_mover_3-euler=0_0_0" pos="0 0 0" rgba="0 0 1 1" size="0.5 0.25" type="cylinder"/>
+    <body>
+      <site name="site_velo_3" pos="0 0 0" size="0.01"/>
+    </body>      
+  </body>
+
+
+  <light castshadow="false" dir="0 0 -20" directional="true" mode="fixed" name="light_0" pos="0 0 20"/>
+  <light castshadow="false" dir="9 9 -20" directional="true" mode="fixed" name="light_1" pos="-9 -9 20"/>
+  <light castshadow="false" dir="9 -9 -20" directional="true" mode="fixed" name="light_2" pos="-9 9 20"/>
+  <light castshadow="false" dir="-9 -9 -20" directional="true" mode="fixed" name="light_3" pos="9 9 20"/>
+  <light castshadow="false" dir="-9 9 -20" directional="true" mode="fixed" name="light_4" pos="9 -9 20"/>
+
+  <camera euler="75 0 -45" mode="fixed" name="cam_1" pos="-7 -7 5"/>
+  <camera euler="75 0 -75" mode="fixed" name="cam_2" pos="-9 -2 5"/>
+  <camera euler="75 0 -15" mode="fixed" name="cam_3" pos="-2 -9 5"/>
+  <camera euler="75 0 225" mode="fixed" name="cam_4" pos="-7 7 5"/>
+  <camera euler="75 0 255" mode="fixed" name="cam_5" pos="-9 2 5"/>
+  <camera euler="75 0 195" mode="fixed" name="cam_6" pos="-2 9 5"/>
+  <camera euler="75 0 135" mode="fixed" name="cam_7" pos="7 7 5"/>
+  <camera euler="75 0 105" mode="fixed" name="cam_8" pos="9 2 5"/>
+  <camera euler="75 0 165" mode="fixed" name="cam_9" pos="2 9 5"/>
+  <camera euler="75 0 45" mode="fixed" name="cam_10" pos="7 -7 5"/>
+  <camera euler="75 0 75" mode="fixed" name="cam_11" pos="9 -2 5"/>
+  <camera euler="75 0 15" mode="fixed" name="cam_12" pos="2 -9 5"/>
+  <camera euler="45 0 -45" mode="fixed" name="cam_13" pos="-5 -5 9"/>
+  <camera euler="45 0 225" mode="fixed" name="cam_14" pos="-5 5 9"/>
+  <camera euler="45 0 135" mode="fixed" name="cam_15" pos="5 5 9"/>
+  <camera euler="45 0 45" mode="fixed" name="cam_16" pos="5 -5 9"/>
+
+ </worldbody>
+
+ <sensor>
+  <velocimeter name="velo_1" site="site_velo_1"/>
+  <velocimeter name="velo_2" site="site_velo_2"/>
+  <velocimeter name="velo_3" site="site_velo_3"/>
+  <!-- <velocimeter name="velo_4" site="site_velo_4"/> -->
+  <!-- <velocimeter name="velo_5" site="site_velo_5"/> -->
+  <!-- <velocimeter name="velo_6" site="site_velo_6"/> -->
+  <!-- <velocimeter name="velo_7" site="site_velo_7"/> -->
+  <!-- <velocimeter name="velo_8" site="site_velo_8"/> -->
+  <!-- <velocimeter name="velo_9" site="site_velo_9"/> -->
+  <!-- <velocimeter name="velo_10" site="site_velo_10"/> -->
+  <!-- <velocimeter name="velo_11" site="site_velo_11"/> -->
+  <!-- <velocimeter name="velo_12" site="site_velo_12"/> -->
+ </sensor>
+
+</world>
