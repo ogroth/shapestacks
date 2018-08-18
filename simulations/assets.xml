@@ -16,6 +16,7 @@
   <texture file="wall/002.png" name="tex_wall_002" type="2d"/>
   <texture file="wall/006.png" name="tex_wall_006" type="2d"/>
   <texture file="wall/004.png" name="tex_wall_004" type="2d"/>
+  <texture name="tex_rgba" type="2d" builtin="flat" rgb1="1.0 1.0 1.0" width="1" height="1"/>
   <material name="mat_floor_003" texture="tex_floor_003"/>
   <material name="mat_floor_001" texture="tex_floor_001"/>
   <material name="mat_floor_005" texture="tex_floor_005"/>
@@ -28,5 +29,6 @@
   <material name="mat_wall_002" texture="tex_wall_002"/>
   <material name="mat_wall_006" texture="tex_wall_006"/>
   <material name="mat_wall_004" texture="tex_wall_004"/>
+  <material name="mat_rgba" texture="tex_rgba" rgba="1 1 1 1"/>
  </asset>
 </assets>
