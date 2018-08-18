@@ -11,6 +11,7 @@ import argparse
 import re
 
 import numpy as np
+import scipy.misc
 import tensorflow as tf
 
 import matplotlib
@@ -51,7 +52,8 @@ ARGPARSER.add_argument(
 # camera parameters
 ARGPARSER.add_argument(
     '--cameras', type=str, nargs='+',
-    default=['cam_1', 'cam_4', 'cam_7', 'cam_10', 'cam_13', 'cam_15'],
+    # default=['cam_1', 'cam_4', 'cam_7', 'cam_10', 'cam_13', 'cam_15'],
+    default=['cam_1', 'cam_4', 'cam_7', 'cam_10'],
     help="The cameras to observe the scene with (cam_1 through cam_16).")
 # rendering parameters
 ARGPARSER.add_argument(
@@ -408,11 +410,20 @@ def _demo_rotation(obj_name):
   Places the object for `obj_name` in scene center and rotates it.
   """
   # object initialization
-  _OBJ_OFFSET = np.sqrt(0.75) - 0.5
   _activate_object(obj_name)
   obj_shape = _get_object_shape(obj_name)
   obj_size = _get_object_size(obj_name)
-  obj_init_pos = [0, 0, obj_size[-1] + _OBJ_OFFSET]
+  if obj_shape == 'box':
+    obj_height = obj_size[2]
+    obj_offset = np.sqrt(0.75) - 0.5  # cube
+  elif obj_shape == 'cylinder':
+    obj_height = obj_size[1]
+    # obj_offset = np.sqrt(0.5) - 0.5  # uniform cylinder
+    obj_offset = np.sqrt(5.0 / 16.0) - 0.5  # tall cylinder
+  elif obj_shape == 'sphere':
+    obj_height = obj_size[0]
+    obj_offset = 0.0
+  obj_init_pos = [0, 0, obj_height + obj_offset]
   _set_object_pos(obj_name, obj_init_pos)
 
   # stability visualization
@@ -421,44 +432,48 @@ def _demo_rotation(obj_name):
   texture_modder = TextureModder(MJSIM)
 
   # rotation
-  _ANGLE_RESOLUTION = 1
-  _SINGLE_AXES = [0, 1, 2]
+  _ANGLE_RES_ALPHA = 1
+  _ANGLE_RES_BETA = 2
   _DOUBLE_AXES = [(0, 1), (0, 2), (1, 2)]
+  _SINGLE_AXES = [0, 1, 2]
 
   while True:
-    for axis in _SINGLE_AXES:  # rotate around single axes
-      for angle in range(0, 360 * _ANGLE_RESOLUTION, 1):
-        # set angle
-        euler = [0.0, 0.0, 0.0]
-        euler[axis] = float(angle) / _ANGLE_RESOLUTION
-        _set_object_euler(obj_name, euler)
-        _set_object_pos(obj_name, obj_init_pos)
-        # compute stability
-        stability = _evaluate_stability(CAM_LIST, STANDBY_CAM)
-        # set color
-        # rad = float(angle) / _ANGLE_RESOLUTION / 360.0 * 2 * np.pi
-        # color_idx = 0.5 * (np.cos(4 * rad) + 1.0)
-        color_idx = 1.0 - stability
-        obj_color = np.array(colormap(color_idx))
-        texture_modder.set_rgb(obj_name, obj_color[0 : 3] * 256.0)
-        _step_and_render()
     for axis in _DOUBLE_AXES:  # rotate around double axes
-      for angle in range(0, 360 * _ANGLE_RESOLUTION, 1):
+      for angle in range(0, 180 * _ANGLE_RES_ALPHA, _ANGLE_RES_BETA):
         # set angle
         euler = [0.0, 0.0, 0.0]
-        euler[axis[0]] = float(angle) / _ANGLE_RESOLUTION
-        euler[axis[1]] = float(angle) / _ANGLE_RESOLUTION
+        euler[axis[0]] = float(angle) / _ANGLE_RES_ALPHA
+        euler[axis[1]] = float(angle) / _ANGLE_RES_ALPHA
         _set_object_euler(obj_name, euler)
         _set_object_pos(obj_name, obj_init_pos)
         # compute stability
         stability = _evaluate_stability(CAM_LIST, STANDBY_CAM)
         # set color
-        # rad = float(angle) / _ANGLE_RESOLUTION / 360.0 * 2 * np.pi
+        # rad = float(angle) / _ANGLE_RES_ALPHA / 360.0 * 2 * np.pi
         # color_idx = 0.5 * (np.cos(4 * rad) + 1.0)
         color_idx = 1.0 - stability
         obj_color = np.array(colormap(color_idx))
         texture_modder.set_rgb(obj_name, obj_color[0 : 3] * 256.0)
         _step_and_render()
+        _save_screenshot('cam_17')
+    for axis in _SINGLE_AXES:  # rotate around single axes
+      for angle in range(0, 180 * _ANGLE_RES_ALPHA, _ANGLE_RES_BETA):
+        # set angle
+        euler = [0.0, 0.0, 0.0]
+        euler[axis] = float(angle) / _ANGLE_RES_ALPHA
+        _set_object_euler(obj_name, euler)
+        _set_object_pos(obj_name, obj_init_pos)
+        # compute stability
+        stability = _evaluate_stability(CAM_LIST, STANDBY_CAM)
+        # set color
+        # rad = float(angle) / _ANGLE_RES_ALPHA / 360.0 * 2 * np.pi
+        # color_idx = 0.5 * (np.cos(4 * rad) + 1.0)
+        color_idx = 1.0 - stability
+        obj_color = np.array(colormap(color_idx))
+        texture_modder.set_rgb(obj_name, obj_color[0 : 3] * 256.0)
+        _step_and_render()
+        _save_screenshot('cam_17')
+    break
 
 
 # simulation modes
@@ -471,6 +486,20 @@ def _step_and_render():
   if FLAGS.rendering_mode == 'onscreen':
     mujoco_py.functions.mjr_setBuffer(FB_WINDOW, MJSIM.render_contexts[0].con)
     MJVIEWER.render()
+
+def _save_screenshot(cam_name, width=640, height=640):
+  """
+  Saves a screenshot with the specified camera and resolution to the simulation directory.
+  """
+  if FLAGS.rendering_mode == 'onscreen':
+    mujoco_py.functions.mjr_setBuffer(FB_OFFSCREEN, MJSIM.render_contexts[0].con)
+  MJSIM.render(width, height, camera_name=STANDBY_CAM)  # dirty shot
+  frame = MJSIM.render(width, height, camera_name=cam_name)
+  frame = np.flip(frame, 0)
+  frame_cnt = (MJSIM.data.time / 0.003)
+  fn = "%06d.png" % (frame_cnt, )
+  scipy.misc.imsave(os.path.join(FLAGS.mjsim_dir, fn), frame)
+
 
 def _idle_mode():
   """
@@ -501,6 +530,7 @@ if __name__ == '__main__':
   print("Initializing cameras...")
   CAM_LIST = FLAGS.cameras
   STANDBY_CAM = 'cam_16'
+  RECORD_CAM = 'cam_17'
   CAM_MODDER = CameraModder(MJSIM)
   _init_cameras(CAM_LIST)
 
