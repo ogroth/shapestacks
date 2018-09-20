@@ -136,7 +136,7 @@ INIT_TEMP = 1.0
 
 # simulation functions
 
-def parse_object_names(mjmodel):
+def _parse_object_names(mjmodel):
   """
   Identifies all objects to stack and returns a list of their names.
   """
@@ -1387,7 +1387,7 @@ if __name__ == '__main__':
 
   # parse objects from world & initialize
   print("Initializing objects...")
-  OBJ_LIST = parse_object_names(MJMODEL)
+  OBJ_LIST = _parse_object_names(MJMODEL)
   if FLAGS.mode == 'stacking':
     _init_objects_stacking(OBJ_LIST)
   else: # leave objects where they are
