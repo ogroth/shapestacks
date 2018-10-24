@@ -6,7 +6,7 @@ This repository contains a Python interface to the ShapeStacks dataset. It also 
 
 For more information about the project, please visit our project page at http://shapestacks.robots.ox.ac.uk
 
-If you use the ShapeStacks dataset or the intuitive physics models of this repository, please cite our [publication](https://arxiv.org/pdf/1804.08018.pdf):
+If you use the ShapeStacks dataset or the intuitive physics models of this repository, please cite our [publication](http://openaccess.thecvf.com/content_ECCV_2018/papers/Oliver_Groth_ShapeStacks_Learning_Vision-Based_ECCV_2018_paper.pdf):
 
 ```
 @InProceedings{Groth_2018_ECCV,
