@@ -9,11 +9,12 @@ For more information about the project, please visit our project page at http://
 If you use the ShapeStacks dataset or the intuitive physics models of this repository, please cite our [publication](https://arxiv.org/pdf/1804.08018.pdf):
 
 ```
-@article{1804.08018,
-Author = {Oliver Groth and Fabian B Fuchs and Ingmar Posner and Andrea Vedaldi},
-Title = {ShapeStacks: Learning Vision-Based Physical Intuition for Generalised Object Stacking},
-Year = {2018},
-Eprint = {arXiv:1804.08018},
+@InProceedings{Groth_2018_ECCV,
+author = {Groth, Oliver and Fuchs, Fabian B. and Posner, Ingmar and Vedaldi, Andrea},
+title = {ShapeStacks: Learning Vision-Based Physical Intuition for Generalised Object Stacking},
+booktitle = {The European Conference on Computer Vision (ECCV)},
+month = {September},
+year = {2018}
 }
 ```
 
