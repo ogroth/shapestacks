@@ -55,7 +55,10 @@ def extract_objects(worldfile_path: str):
     geom_node = body_node.find('geom')
     name = geom_node.attrib['name']
     com = _strtuple2float(body_node.attrib['pos'])
-    euler = _strtuple2float(body_node.attrib['euler'])
+    if 'euler' in body_node.attrib:
+      euler = _strtuple2float(body_node.attrib['euler'])
+    else:
+      euler = (0.0, 0.0, 0.0)
     level = int(re.findall(r'\d+', name)[0])
     shape = geom_node.attrib['type']
     size = _strtuple2float(geom_node.attrib['size'])
