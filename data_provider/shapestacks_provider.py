@@ -12,19 +12,22 @@ import tensorflow as tf
 import numpy as np
 
 
-# dataset constants
+# ---------- dataset constants ----------
+
+# raw images
 _CHANNELS = 3 # RGB images
 _HEIGHT = 224
 _WIDTH = 224
-_NUM_CLASSES = 2 # stable | unstable
-# label semantics: 0 = stable | 1 = unstable
 
-# data augmentation constants
+# label semantics: 0 = stable | 1 = unstable
+_NUM_CLASSES = 2 # stable | unstable
+
+# data augmentation
 _CROP_HEIGHT = 196
 _CROP_WIDTH = 196
 
 
-# internal dataset creation, file parsing and pre-processing
+# ---------- file-parsing, pre-processing and augmentation ----------
 
 def _get_filenames_with_labels(mode, data_dir, split_dir):
   """
@@ -168,7 +171,7 @@ def _center_data(feature, label, rgb_mean):
   return feature_centered, label
 
 
-# public input_fn for dataset iteration
+# ---------- public input_fn to be used with tf.estimator ----------
 
 def shapestacks_input_fn(
     mode, data_dir, split_name,
