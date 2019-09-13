@@ -67,7 +67,7 @@ ARGPARSER.add_argument(
 ARGPARSER.add_argument(
     # TODO: deprecate list, allow only one! (rendering artifacts on Ubuntu with GPU)
     '--formats', type=str, nargs='+', default=['rgb'],
-    help="The formats to record in. Available formats are: rgb | vseg | depth.")
+    help="The formats to record in. Available formats are: rgb | vseg | iseg | depth.")
 ARGPARSER.add_argument(
     '--with_stereo', action='store_true',
     help="Also store stereo images of modalities.")
@@ -118,6 +118,16 @@ VSEG_COLOR_CODES = [
     [0, 1, 1, 1],  # cyan
     [1, 0, 1, 1],  # magenta
     [1, 1, 1, 1],  # white : unassigned pixel
+]
+ISEG_COLOR_CODES = [
+    [0, 0, 0, 1],  # black: background pixel
+    [0, 1, 0, 1],  # green
+    [1, 0, 0, 1],  # red
+    [1, 1, 0, 1],  # yellow
+    [0, 0, 1, 1],  # blue
+    [0, 1, 1, 1],  # cyan
+    [1, 0, 1, 1],  # magenta
+    [1, 1, 1, 1],  # white: unassigned pixel
 ]
 
 # helper functions
@@ -218,6 +228,25 @@ def _init_scene_vseg(
   sim.step()
   return sim
 
+def _init_scene_iseg(
+    sim: mujoco_py.MjSim, world_xml: ET.Element,
+    height: int) -> mujoco_py.MjSim:
+  """
+  Initialize the scene for instance segmentation rendering.
+  """
+  for obj_id in range(1, height+1):
+
+    # get geom
+    mj_geom_name = 'shape_%s' % obj_id
+    mj_geom_id = sim.model.geom_name2id(mj_geom_name)
+
+    # set color
+    sim.model.geom_rgba[mj_geom_id] = np.array(ISEG_COLOR_CODES[obj_id], dtype=np.float32)
+
+  # advance simulation by one step to update rendering
+  sim.step()
+  return sim
+
 # rendering setup
 
 def _setup_render_rgb(sim: mujoco_py.MjSim) -> mujoco_py.MjSim:
@@ -259,7 +288,7 @@ def _setup_render_depth(sim: mujoco_py.MjSim) -> mujoco_py.MjSim:
 def setup_render(sim: mujoco_py.MjSim, modality: str) -> mujoco_py.MjSim:
   if modality == 'rgb':
     render_sim = _setup_render_rgb(sim)
-  elif modality == 'vseg':
+  elif modality == 'vseg' or modality == 'iseg':
     render_sim = _setup_render_seg(sim)
   elif modality == 'depth':
     render_sim = _setup_render_depth(sim)
@@ -311,7 +340,7 @@ def _render_depth(sim: mujoco_py.MjSim, camera: str, render_height: int, render_
 def render_modality(sim: mujoco_py.MjSim, modality: str, camera: str, render_height: int, render_width: int, world_xml: ET.Element):
   if modality == 'rgb':
     frame = _render_rgb(sim, camera, render_height, render_width, world_xml)
-  elif modality == 'vseg':
+  elif modality == 'vseg' or modality == 'iseg':
     frame = _render_seg(sim, camera, render_height, render_width, world_xml)
   elif modality == 'depth':
     frame = _render_depth(sim, camera, render_height, render_width, world_xml)
@@ -379,6 +408,13 @@ if __name__ == '__main__':
     sim = _init_scene_vseg(
         sim, world_xml,
         height, violations)
+  elif 'iseg' in FLAGS.formats:
+    env_str = os.path.basename(FLAGS.mjmodel_path)
+    h_str = re.search(r'h=\d+', env_str).group(0)
+    height = int(h_str.lstrip('h='))
+    sim = _init_scene_iseg(
+        sim, world_xml,
+        height)
 
   # adjust cameras
   cm = CameraModder(sim)
