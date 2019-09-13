@@ -24,6 +24,13 @@ ShapeStacksObject = namedtuple(
     ]
 )
 
+ShapeStacksExample = namedtuple(
+    'ShapeStacksExample',
+    [
+        # TODO(ogroth): implement!
+    ]
+)
+
 
 # ---------- helper functions ----------
 
@@ -33,6 +40,17 @@ def _strtuple2float(strtup):
 
 
 # ---------- public APIs ----------
+
+def parse_image_filename(scenario_dir: str):
+  """
+  Parses all images in a scenario directory of the ShapeStacks dataset and returns
+  a list of examples containing all labels per image.
+  Example file: data/shapestacks_example/recordings/env_ccs-easy-h=5-vcom=2-vpsf=0-v=1/rgb-w=0-f=0-l=0-c=original-cam_1-mono-0.png
+
+  Returns:
+    [ShapeStacksExample]
+  """
+  pass
 
 def extract_objects(worldfile_path: str):
   """
