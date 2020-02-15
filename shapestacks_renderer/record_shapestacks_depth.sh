@@ -59,5 +59,6 @@ for env_file in `ls ${MJCF_ROOT_DIR} | grep env_ | grep ${FILTER}`; do
   # create params and render
   params=$(create_params "${MJCF_ROOT_DIR}/$env_file" $record_dir)
   # echo $params
-  LD_PRELOAD=/usr/lib/nvidia-384/libOpenGL.so python3 record_scenario.py ${params} > ${log_file}
+  # LD_PRELOAD=/usr/lib/nvidia-384/libOpenGL.so python3 record_scenario.py ${params} > ${log_file}
+  LD_PRELOAD=/usr/lib/nvidia-418/libOpenGL.so python3 record_scenario.py ${params} > ${log_file}
 done

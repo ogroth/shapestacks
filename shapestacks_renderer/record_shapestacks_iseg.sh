@@ -15,15 +15,21 @@ RECORD_ROOT_DIR="${DATASET_ROOT_DIR}/recordings"
 FILTER="h=[$2]"
 
 # recording options
-TIME=1
+# TIME=1
+TIME=5
 FPS=8
-MAX_FRAMES=1
+# MAX_FRAMES=1
+MAX_FRAMES=40
 RES="224 224"
-CAMERAS="cam_1 cam_2 cam_3 \
-    cam_4 cam_5 cam_6 \
-    cam_7 cam_8 cam_9 \
-    cam_10 cam_11 cam_12 \
-    cam_13 cam_14 cam_15 cam_16"
+# CAMERAS="cam_1 cam_2 cam_3 \
+#     cam_4 cam_5 cam_6 \
+#     cam_7 cam_8 cam_9 \
+#     cam_10 cam_11 cam_12 \
+#     cam_13 cam_14 cam_15 cam_16"
+CAMERAS="cam_1 \
+    cam_4 \
+    cam_7 \
+    cam_10"
 FORMAT="iseg"
 
 # helper functions
@@ -59,7 +65,8 @@ for env_file in `ls ${MJCF_ROOT_DIR} | grep env_ | grep ${FILTER}`; do
   # create params and render
   params=$(create_params "${MJCF_ROOT_DIR}/$env_file" $record_dir)
   # echo $params
-  LD_PRELOAD=/usr/lib/nvidia-384/libOpenGL.so python3 record_scenario.py ${params} > ${log_file}
+  # LD_PRELOAD=/usr/lib/nvidia-384/libOpenGL.so python3 record_scenario.py ${params} > ${log_file}
+  LD_PRELOAD=/usr/lib/nvidia-418/libOpenGL.so python3 record_scenario.py ${params} > ${log_file}
 done
 
 # convert to .map files!
