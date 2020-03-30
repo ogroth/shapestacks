@@ -10,5 +10,8 @@ venv/
 # Vim
 *.swp
 
+# Data
+data/
+
 # Models
-models/*
+models/
