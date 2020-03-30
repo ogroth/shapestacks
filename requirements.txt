@@ -8,7 +8,7 @@ gast==0.2.0
 grpcio==1.11.0
 html5lib==0.9999999
 kiwisolver==1.0.1
-lxml==3.5.0
+lxml==3.6.0
 Markdown==2.6.11
 matplotlib==2.2.2
 numpy==1.14.2
@@ -21,4 +21,5 @@ scipy==1.1.0
 tensorboard==1.8.0
 tensorflow-gpu==1.8.0
 termcolor==1.1.0
-Werkzeug==0.15.3
+Werkzeug==0.14.1
+mujoco-py<1.50.2,>=1.50.1
