@@ -18,7 +18,8 @@ import re
 import xml.etree.ElementTree as ET
 
 import numpy as np
-import scipy.misc
+# import scipy.misc
+import imageio
 
 import mujoco_py
 from mujoco_py.modder import LightModder, CameraModder
@@ -420,21 +421,36 @@ if __name__ == '__main__':
 
           # save frame
           if modality == 'depth':
-            frame_mono = np.flip(frame[:, :render_width], 0)
+            # frame_mono = np.flip(frame[:, :render_width], 0)
+            frame_mono = frame[:, :render_width]
           else:
-            frame_mono = np.flip(frame[:, :render_width, :], 0)
-          frame_fn = "%s-w=%s-f=%s-l=%s-c=%s-%s-mono-%s.%s" % \
+            # frame_mono = np.flip(frame[:, :render_width, :], 0)
+            frame_mono = frame[:, :render_width, :]
+          # frame_fn = "%s-w=%s-f=%s-l=%s-c=%s-%s-mono-%s.%s" % \
+          #     (modality, FLAGS.walltex, FLAGS.floortex, FLAGS.lightid, \
+          #     FLAGS.color_mode, camera, frame_nr, FLAGS.file_format)
+          frame_fn = "%s-w=%s-f=%s-l=%s-c=%s-%s-mono-%04d.%s" % \
               (modality, FLAGS.walltex, FLAGS.floortex, FLAGS.lightid, \
               FLAGS.color_mode, camera, frame_nr, FLAGS.file_format)
-          scipy.misc.imsave(
+          # scipy.misc.imsave(
+          #     os.path.join(FLAGS.record_path, frame_fn),
+          #     frame_mono)
+          imageio.imwrite(
               os.path.join(FLAGS.record_path, frame_fn),
               frame_mono)
           if FLAGS.with_stereo:
-            frame_stereo = np.flip(frame, 0)
-            frame_fn = "%s-w=%s-f=%s-l=%s-c=%s-%s-stereo-%s.%s" % \
+            # frame_stereo = np.flip(frame, 0)
+            frame_stereo = frame
+            # frame_fn = "%s-w=%s-f=%s-l=%s-c=%s-%s-stereo-%s.%s" % \
+            #     (modality, FLAGS.walltex, FLAGS.floortex, FLAGS.lightid, \
+            #     FLAGS.color_mode, camera, frame_nr, FLAGS.file_format)
+            frame_fn = "%s-w=%s-f=%s-l=%s-c=%s-%s-stereo-%04d.%s" % \
                 (modality, FLAGS.walltex, FLAGS.floortex, FLAGS.lightid, \
                 FLAGS.color_mode, camera, frame_nr, FLAGS.file_format)
-            scipy.misc.imsave(
+            # scipy.misc.imsave(
+            #     os.path.join(FLAGS.record_path, frame_fn),
+            #     frame_stereo)
+            imageio.imwrite(
                 os.path.join(FLAGS.record_path, frame_fn),
                 frame_stereo)
 
