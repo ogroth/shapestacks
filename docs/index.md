@@ -19,9 +19,23 @@ RGB images (33 GB):\
 Violation segmentation maps (875 MB):\
 ![download icon](img/oi-data-transfer-download.svg) [shapestacks-vseg.tar.gz](http://shapestacks-file.robots.ox.ac.uk/static/download/v1/shapestacks-vseg.tar.gz) &middot; [shapestacks-vseg.md5](http://shapestacks-file.robots.ox.ac.uk/static/download/v1/shapestacks-vseg.md5)
 
+Instance segmentation maps (352 MB):\
+![download icon](img/oi-data-transfer-download.svg) [shapestacks-iseg.tar.gz](http://shapestacks-file.robots.ox.ac.uk/static/download/v1/shapestacks-iseg.tar.gz) &middot; [shapestacks-iseg.md5](http://shapestacks-file.robots.ox.ac.uk/static/download/v1/shapestacks-iseg.md5)
+
 Depth maps (1.1 GB):\
 ![download icon](img/oi-data-transfer-download.svg) [shapestacks-depth.tar.gz](http://shapestacks-file.robots.ox.ac.uk/static/download/v1/shapestacks-depth.tar.gz) &middot; [shapestacks-depth.md5](http://shapestacks-file.robots.ox.ac.uk/static/download/v1/shapestacks-depth.md5)
 
+
+The dataset can also be downloaded from the command line using `wget`:
+```bash
+wget http://shapestacks-file.robots.ox.ac.uk/static/download/v1/ShapeStacks-Manual.md  # ShapeStacks-Manual.md
+wget http://shapestacks-file.robots.ox.ac.uk/static/download/v1/shapestacks-mjcf.tar.gz  # shapestacks-mjcf.tar.gz
+wget http://shapestacks-file.robots.ox.ac.uk/static/download/v1/shapestacks-meta.tar.gz  # shapestacks-meta.tar.gz
+wget http://shapestacks-file.robots.ox.ac.uk/static/download/v1/shapestacks-rgb.tar.gz  # shapestacks-rgb.tar.gz
+wget http://shapestacks-file.robots.ox.ac.uk/static/download/v1/shapestacks-vseg.tar.gz  # shapestacks-iseg.tar.gz
+wget http://shapestacks-file.robots.ox.ac.uk/static/download/v1/shapestacks-iseg.tar.gz  # shapestacks-iseg.tar.gz
+wget http://shapestacks-file.robots.ox.ac.uk/static/download/v1/shapestacks-depth.tar.gz  # shapestacks-depth.tar.gz
+```
 
 ## Source Code
 
