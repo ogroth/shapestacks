@@ -1,6 +1,6 @@
 # Running the Stacking Simulation
 
-Before you can run the stacker, you need a trained stability predictor. You can either train one yourself with the training script provided [train_inception_v4_shapestacks.py](../intuitive_physics/stability_predictor/train_inception_v4_shapestacks.py) or you can [download](http://shapestacks.robots.ox.ac.uk/static/download/v1/shapestacks-incpv4.tar.gz) the pre-trained models from the original [ShapeStacks paper](https://arxiv.org/pdf/1804.08018.pdf) and place them under ```${SHAPESTACKS_CODE_HOME}/models/```.
+Before you can run the stacker, you need a trained stability predictor. You can either train one yourself with the training script provided [train_inception_v4_shapestacks.py](../intuitive_physics/stability_predictor/train_inception_v4_shapestacks.py) or you can [download](http://shapestacks-file.robots.ox.ac.uk/static/download/v1/shapestacks-incpv4.tar.gz) the pre-trained models from the original [ShapeStacks paper](https://arxiv.org/pdf/1804.08018.pdf) and place them under ```${SHAPESTACKS_CODE_HOME}/models/```.
 
 After activating the ShapeStacks virtual environment, run the stacking script as follows:
 
