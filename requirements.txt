@@ -6,7 +6,7 @@ bs4==0.0.1
 cycler==0.10.0
 gast==0.2.0
 grpcio==1.11.0
-html5lib==0.9999999
+html5lib==0.999999999
 kiwisolver==1.0.1
 lxml==3.6.0
 Markdown==2.6.11
